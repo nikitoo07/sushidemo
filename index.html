@@ -674,17 +674,17 @@ footer {
     <li><a href="#promotions">Promociones</a></li>
     <li><a href="#testimonials">Opiniones</a></li>
   </ul>
-  <div class="hamburger" id="hamburger" onclick="this.classList.toggle('active'); document.getElementById('mobileNav').classList.toggle('open')">
+  <button class="hamburger" id="navToggle" aria-controls="mobileNav" aria-expanded="false" aria-label="Abrir menú">
     <span></span><span></span><span></span>
-  </div>
+  </button>
 </nav>
 
 <!-- MOBILE NAV -->
-<div class="mobile-nav" id="mobileNav">
-  <a href="#about" onclick="document.getElementById('hamburger').classList.remove('active'); document.getElementById('mobileNav').classList.remove('open')">Nosotros</a>
-  <a href="#menu" onclick="document.getElementById('hamburger').classList.remove('active'); document.getElementById('mobileNav').classList.remove('open')">Menú</a>
-  <a href="#promotions" onclick="document.getElementById('hamburger').classList.remove('active'); document.getElementById('mobileNav').classList.remove('open')">Promociones</a>
-  <a href="#testimonials" onclick="document.getElementById('hamburger').classList.remove('active'); document.getElementById('mobileNav').classList.remove('open')">Opiniones</a>
+<div class="mobile-nav" id="mobileNav" aria-hidden="true">
+  <a href="#about" class="mobile-link">Nosotros</a>
+  <a href="#menu" class="mobile-link">Menú</a>
+  <a href="#promotions" class="mobile-link">Promociones</a>
+  <a href="#testimonials" class="mobile-link">Opiniones</a>
 </div>
 
 <!-- HERO -->
@@ -953,6 +953,42 @@ function filterMenu(cat, btn) {
 }
 
 renderMenu('all');
+
+// --- MOBILE NAV TOGGLE (accessible) ---
+(function(){
+  const navToggle = document.getElementById('navToggle');
+  const mobileNav = document.getElementById('mobileNav');
+  if (!navToggle || !mobileNav) return;
+
+  function openNav(){
+    navToggle.classList.add('active');
+    mobileNav.classList.add('open');
+    navToggle.setAttribute('aria-expanded','true');
+    mobileNav.setAttribute('aria-hidden','false');
+    navToggle.setAttribute('aria-label','Cerrar menú');
+  }
+  function closeNav(){
+    navToggle.classList.remove('active');
+    mobileNav.classList.remove('open');
+    navToggle.setAttribute('aria-expanded','false');
+    mobileNav.setAttribute('aria-hidden','true');
+    navToggle.setAttribute('aria-label','Abrir menú');
+  }
+
+  navToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    mobileNav.classList.contains('open') ? closeNav() : openNav();
+  });
+
+  // Close when clicking a mobile link
+  document.querySelectorAll('.mobile-link').forEach(a => a.addEventListener('click', () => closeNav()));
+
+  // Close on Escape
+  document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeNav(); });
+
+  // Close when clicking on overlay (outside links)
+  mobileNav.addEventListener('click', (ev) => { if (ev.target === mobileNav) closeNav(); });
+})();
 </script>
 
 <!-- INJECT HERO IMAGE -->
